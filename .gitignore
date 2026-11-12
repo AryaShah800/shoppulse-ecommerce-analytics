@@ -1,0 +1,12 @@
+# Source data is downloaded from Kaggle, not committed (licence + size). The manifest is committed.
+data/raw/*.csv
+!data/raw/manifest.csv
+
+# Python
+__pycache__/
+.venv/
+.ipynb_checkpoints/
+
+# Secrets
+.env
+*.json.key

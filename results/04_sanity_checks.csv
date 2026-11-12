@@ -1,0 +1,6 @@
+check_name,value
+reviews table rows,95560
+repeat table rows (people),56154
+repeat table: duplicate people (must be 0),0
+repeat table: late share (%),6.99
+repeat table: repeat share (%),3.17

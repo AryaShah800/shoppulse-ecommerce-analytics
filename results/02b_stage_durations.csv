@@ -1,0 +1,5 @@
+step,stage,median,p90
+1,Purchase -> approval (hours),0.3,34.5
+2,Approval -> carrier (days),1.8,6.0
+3,Carrier -> customer (days),7.1,18.9
+4,"Purchase -> delivery, total (days)",10.2,23.1

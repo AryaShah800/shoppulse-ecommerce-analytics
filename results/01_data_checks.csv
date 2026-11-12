@@ -1,0 +1,16 @@
+id,check_name,value,note
+1,Orders (rows),99441,"Expect 99,441"
+2,Duplicate order_id,0,Must be 0
+3,Distinct customer_id,99441,One per order
+4,Distinct customer_unique_id (real people),96096,Lower than check 3 -> some people ordered again
+5,fct_orders rows (join kept every order?),99441,Must equal check 1
+6,Purchase date range,2016-09-04 to 2018-10-17,Sparse months at both ends -> analysis window in 02
+7,Orders by status,"delivered=96478, shipped=1107, canceled=625, unavailable=609, invoiced=314, processing=301, created=5, approved=2",Funnel input
+8,Orders with no items,775,Mostly unavailable/canceled; excluded from revenue
+9,Delivered status but no delivered date,8,Excluded from is_late
+10,Negative stage durations (timestamp errors),1381,Set to NULL in fct_orders
+11,Orders with >1 review row (raw),547,Deduplicated in stg_reviews
+12,Delivered orders with no review,646,Excluded from review tests
+13,Payment vs items+freight gap > R$1,249,Instalment interest/vouchers; use item_value for revenue
+14,Late share of delivered orders (%),6.77,Headline for Day 4-5
+15,People with 2+ orders (%),3.12,Expect very low -> repeat buyers are rare

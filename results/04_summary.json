@@ -1,0 +1,65 @@
+{
+  "n_orders_reviews": 95560,
+  "n_people_repeat": 56154,
+  "review_test": {
+    "n_late": 6378,
+    "n_ontime": 89182,
+    "low_rate_late": 0.6240200689871434,
+    "low_rate_ontime": 0.09248503061155838,
+    "diff": 0.531535038375585,
+    "ci_low": 0.5194233256017263,
+    "ci_high": 0.5434937757918931,
+    "p": 0.0,
+    "mean_score_late": 2.270931326434619,
+    "mean_score_ontime": 4.291045278195152,
+    "mannwhitney_p": 0.0
+  },
+  "repeat_test": {
+    "n_late": 3924,
+    "n_ontime": 52230,
+    "repeat_rate_ontime": 0.03203139957878614,
+    "repeat_rate_late": 0.027013251783893986,
+    "gap_pp": 0.5018147794892153,
+    "ci_low_pp": -0.07283519908906372,
+    "ci_high_pp": 0.9897686843606656,
+    "p": 0.08347051012650802,
+    "relative_drop_pct": 15.666339469648364,
+    "repeaters_late": 106,
+    "repeaters_ontime": 1673
+  },
+  "robustness_state": {
+    "state": "SP",
+    "n_late": 966,
+    "n_ontime": 21330,
+    "gap_pp": 0.8906768235331801,
+    "ci_low_pp": -0.3371065638814728,
+    "ci_high_pp": 1.7578098179614727,
+    "p": 0.13737941550024269
+  },
+  "logit_adjusted": {
+    "odds_ratio_late": 0.8588237689333886,
+    "ci_low": 0.7026298559720114,
+    "ci_high": 1.0497394322428726,
+    "p": 0.1372792076345143
+  },
+  "logit_adjusted_month": {
+    "odds_ratio_late": 0.8622243560143856,
+    "ci_low": 0.7029330012681873,
+    "ci_high": 1.0576126583375245,
+    "p": 0.15489053197551725
+  },
+  "power": {
+    "baseline_rate": 0.03203139957878614,
+    "mde_gap_pp": 0.7659617958453099,
+    "detectable_late_rate": 0.02437178162033304
+  },
+  "revenue_at_stake_brl": {
+    "avg_repeat_order_value": 121.47093872962338,
+    "late_first_time_customers": 3924,
+    "window_months": 13.896189224704337,
+    "estimate": 2391.9099999451123,
+    "low": 0.0,
+    "high": 4717.751868855974,
+    "annualized_estimate": 2065.524550307212
+  }
+}

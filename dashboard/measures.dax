@@ -1,0 +1,112 @@
+// =====================================================================
+// ShopPulse - DAX measures (Power BI Desktop)
+// Tables to load (Get data -> Google BigQuery -> project -> dataset "shoppulse"):
+//   fct_orders, mart_funnel_monthly, mart_cohort_retention, mart_rfm
+// Create a Date table (Modeling -> New table):
+//   Dim Date = CALENDAR(DATE(2017,1,1), DATE(2018,8,31))
+// Relationship: Dim Date[Date]  1-to-many  fct_orders[purchase_date]  (see calculated column below)
+// Put all measures in a table named "_Measures" (Enter data -> empty table) to keep the field list tidy.
+// =====================================================================
+
+// ---- calculated column on fct_orders (Modeling -> New column) ----
+// purchase_date = DATE(YEAR(fct_orders[purchased_at]), MONTH(fct_orders[purchased_at]), DAY(fct_orders[purchased_at]))
+
+// ---- Volume ----
+Orders = COUNTROWS ( fct_orders )
+
+Delivered Orders =
+CALCULATE ( [Orders], fct_orders[reached_delivered] = TRUE () )
+
+Canceled Orders =
+CALCULATE ( [Orders], fct_orders[order_status] = "canceled" )
+
+// ---- Funnel ----
+Approved Orders =
+CALCULATE ( [Orders], fct_orders[reached_approved] = TRUE () )
+
+Shipped Orders =
+CALCULATE ( [Orders], fct_orders[reached_carrier] = TRUE () )
+
+Delivered % of Placed =
+DIVIDE ( [Delivered Orders], [Orders] )
+
+Approval % = DIVIDE ( [Approved Orders], [Orders] )
+Handover % = DIVIDE ( [Shipped Orders], [Approved Orders] )
+Delivery % = DIVIDE ( [Delivered Orders], [Shipped Orders] )
+
+// ---- Delivery performance ----
+Late Orders =
+CALCULATE ( [Orders], fct_orders[is_late] = TRUE () )
+
+On-time Orders =
+CALCULATE ( [Orders], fct_orders[is_late] = FALSE () )
+
+On-time % =
+DIVIDE ( [On-time Orders], [On-time Orders] + [Late Orders] )
+
+Late % = 1 - [On-time %]
+
+Avg Delivery Days =
+DIVIDE ( AVERAGEX ( FILTER ( fct_orders, fct_orders[reached_delivered] ), fct_orders[hrs_purchase_to_delivery] ), 24 )
+
+Avg Review Score =
+AVERAGE ( fct_orders[review_score] )
+
+Low Review % =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( fct_orders ), fct_orders[review_score] <= 2 ),
+    CALCULATE ( COUNTROWS ( fct_orders ), NOT ISBLANK ( fct_orders[review_score] ) )
+)
+
+Low Review % (Late) =
+CALCULATE ( [Low Review %], fct_orders[is_late] = TRUE () )
+
+Low Review % (On-time) =
+CALCULATE ( [Low Review %], fct_orders[is_late] = FALSE () )
+
+// ---- Revenue (R$) ----
+Revenue (R$) =
+CALCULATE ( SUM ( fct_orders[item_value] ), fct_orders[reached_delivered] = TRUE () )
+
+AOV (R$) = DIVIDE ( [Revenue (R$)], [Delivered Orders] )
+
+Revenue MoM % =
+VAR prev = CALCULATE ( [Revenue (R$)], DATEADD ( 'Dim Date'[Date], -1, MONTH ) )
+RETURN DIVIDE ( [Revenue (R$)] - prev, prev )
+
+// ---- Customers / retention ----
+// Same "valid order" rule as the SQL: canceled and unavailable orders never became a purchase.
+Valid Orders =
+CALCULATE ( [Orders], NOT ( fct_orders[order_status] IN { "canceled", "unavailable" } ) )
+
+Customers =
+CALCULATE (
+    DISTINCTCOUNT ( fct_orders[customer_unique_id] ),
+    NOT ( fct_orders[order_status] IN { "canceled", "unavailable" } )
+)
+
+Repeat Customers =
+COUNTROWS (
+    FILTER ( VALUES ( fct_orders[customer_unique_id] ), [Valid Orders] >= 2 )
+)
+
+Repeat Customer % = DIVIDE ( [Repeat Customers], [Customers] )
+
+// Cohort heatmap: matrix rows = mart_cohort_retention[cohort_month], columns = month_offset
+Cohort Retention % =
+AVERAGE ( mart_cohort_retention[retention_pct] ) / 100
+
+// ---- Revenue-at-risk calculator (What-if parameters) ----
+// Create two parameters: Modeling -> New parameter -> Numeric range
+//   "Repeat Gap pp"        min 0   max 5    step 0.05  default = <gap from results/04_resume_numbers.md>
+//   "Avg Repeat Order R$"  min 50  max 400  step 5     default = <avg repeat order value from 04_summary.json>
+// Power BI then creates [Repeat Gap pp Value] and [Avg Repeat Order R$ Value] automatically.
+Late First-time Customers =
+CALCULATE (
+    DISTINCTCOUNT ( fct_orders[customer_unique_id] ),
+    fct_orders[customer_order_seq] = 1,
+    fct_orders[is_late] = TRUE ()
+)
+
+Revenue at Risk (R$) =
+[Late First-time Customers] * ( [Repeat Gap pp Value] / 100 ) * [Avg Repeat Order R$ Value]
