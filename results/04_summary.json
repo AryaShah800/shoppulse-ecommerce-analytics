@@ -1,6 +1,6 @@
 {
   "n_orders_reviews": 95560,
-  "n_people_repeat": 56154,
+  "n_people_repeat": 52310,
   "review_test": {
     "n_late": 6378,
     "n_ontime": 89182,
@@ -15,51 +15,51 @@
     "mannwhitney_p": 0.0
   },
   "repeat_test": {
-    "n_late": 3924,
-    "n_ontime": 52230,
-    "repeat_rate_ontime": 0.03203139957878614,
-    "repeat_rate_late": 0.027013251783893986,
-    "gap_pp": 0.5018147794892153,
-    "ci_low_pp": -0.07283519908906372,
-    "ci_high_pp": 0.9897686843606656,
-    "p": 0.08347051012650802,
-    "relative_drop_pct": 15.666339469648364,
-    "repeaters_late": 106,
-    "repeaters_ontime": 1673
+    "n_late": 2668,
+    "n_ontime": 49642,
+    "repeat_rate_ontime": 0.01865355948591918,
+    "repeat_rate_late": 0.013493253373313344,
+    "gap_pp": 0.5160306112605836,
+    "ci_low_pp": -0.009755448102777547,
+    "ci_high_pp": 0.9088016260749621,
+    "p": 0.05328873189804323,
+    "relative_drop_pct": 27.66392181878822,
+    "repeaters_late": 36,
+    "repeaters_ontime": 926
   },
   "robustness_state": {
     "state": "SP",
-    "n_late": 966,
-    "n_ontime": 21330,
-    "gap_pp": 0.8906768235331801,
-    "ci_low_pp": -0.3371065638814728,
-    "ci_high_pp": 1.7578098179614727,
-    "p": 0.13737941550024269
+    "n_late": 729,
+    "n_ontime": 20505,
+    "gap_pp": 0.5930100356933921,
+    "ci_low_pp": -0.5945707082909735,
+    "ci_high_pp": 1.2883779937986335,
+    "p": 0.27042776318786255
   },
   "logit_adjusted": {
-    "odds_ratio_late": 0.8588237689333886,
-    "ci_low": 0.7026298559720114,
-    "ci_high": 1.0497394322428726,
-    "p": 0.1372792076345143
+    "odds_ratio_late": 0.7396665809316129,
+    "ci_low": 0.5281169707762079,
+    "ci_high": 1.03595733752495,
+    "p": 0.07935531573490348
   },
   "logit_adjusted_month": {
-    "odds_ratio_late": 0.8622243560143856,
-    "ci_low": 0.7029330012681873,
-    "ci_high": 1.0576126583375245,
-    "p": 0.15489053197551725
+    "odds_ratio_late": 0.7824599470368153,
+    "ci_low": 0.5574244861263731,
+    "ci_high": 1.0983435137043025,
+    "p": 0.15624440820620747
   },
   "power": {
-    "baseline_rate": 0.03203139957878614,
-    "mde_gap_pp": 0.7659617958453099,
-    "detectable_late_rate": 0.02437178162033304
+    "baseline_rate": 0.01865355948591918,
+    "mde_gap_pp": 0.6783103173474719,
+    "detectable_late_rate": 0.01187045631244446
   },
   "revenue_at_stake_brl": {
-    "avg_repeat_order_value": 121.47093872962338,
-    "late_first_time_customers": 3924,
-    "window_months": 13.896189224704337,
-    "estimate": 2391.9099999451123,
+    "avg_repeat_order_value": 120.40201663201665,
+    "late_first_time_customers": 2668,
+    "window_months": 13.797634691195794,
+    "estimate": 1657.6584480732354,
     "low": 0.0,
-    "high": 4717.751868855974,
-    "annualized_estimate": 2065.524550307212
+    "high": 2919.366913923475,
+    "annualized_estimate": 1441.6892331242655
   }
 }

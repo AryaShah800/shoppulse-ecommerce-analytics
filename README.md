@@ -14,8 +14,8 @@
 - **Fulfilment funnel** (`02a`, `02b`): 99,092 orders placed; 97.09% reached delivery. The biggest drop is at the carrier handover (1,593 orders lost, 98.39% step conversion). Median purchase-to-delivery is 10.2 days (p90 23.1 days).
 - **Cohort retention** (`03a`, `03b`): 94,990 customers, of whom 2,887 (3.04%) ordered more than once. Repeat buying is rare in this dataset.
 - **Late delivery vs reviews** (`04`): 62.40% of late orders got 1-2 stars vs 9.25% of on-time orders (p < 0.001; 95,560 orders).
-- **Late delivery vs repeat purchase** (`04`): 180-day repeat rate 2.70% (late) vs 3.20% (on-time), gap 0.50 pp, 95% CI -0.07 to 0.99, p = 0.083 (56,154 people). **No statistically significant difference.** Adjusted odds ratio 0.86 (95% CI 0.70 to 1.05); still non-significant when controlling for purchase month (p = 0.155). The test could only detect gaps of about 0.77 pp or more.
-- **Revenue at stake** (`04`): R$2,392 over 13.9 months, range R$0 to R$4,718. Observational data and a non-significant gap, so this is an upper-end illustration, not a proven loss.
+- **Late delivery vs repeat purchase** (`04`): repeat rate within 180 days of first delivery is 1.35% (late) vs 1.87% (on-time), gap 0.52 pp, 95% CI -0.01 to 0.91, p = 0.053 (52,310 people). **Borderline, not statistically significant at the 5% level.** Adjusted odds ratio 0.74 (95% CI 0.53 to 1.04); 0.78 (0.56 to 1.10, p = 0.156) when also controlling for purchase month. The repeat rate falls as lateness grows (1.52% for 1-3 days late, 1.22% for 8+), but the test could only detect gaps of about 0.68 pp or more.
+- **Revenue at stake** (`04`): R$1,658 over 13.8 months, range R$0 to R$2,919. Observational data and a non-significant gap, so this is an upper-end illustration, not a proven loss.
 
 ## Pipeline
 
@@ -84,5 +84,5 @@ shoppulse/
 | Funnel stage reached | Cumulative: an order that reached a later stage counts as having passed the earlier ones. |
 | Revenue | Sum of item `price` (excludes freight and instalment interest). |
 | Valid order | Status not `canceled` or `unavailable`. |
-| Repeat purchase | Another valid order within 180 days of a person's first delivered order; first orders cut off 180 days before the end of the data so everyone had full follow-up. |
+| Repeat purchase | Another valid order placed after a person's first order was delivered, within 180 days of that delivery (an order placed before delivery cannot be a reaction to it). First orders delivered on or before 2018-03-04, so everyone had full follow-up. |
 | RFM | Recency and Monetary in quintiles (5 = best); Frequency is a rule (1 / 2 / 3+) because almost everyone orders only once (3.04% of customers ordered twice or more, Q1 in 03). |

@@ -16,7 +16,7 @@
 # %%
 import os, json, pathlib, numpy as np, pandas as pd, matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt, seaborn as sns, scipy.stats as st
-import statsmodels.api as sm, statsmodels.formula.api as smf
+import statsmodels.formula.api as smf
 from statsmodels.stats.proportion import proportions_ztest, confint_proportions_2indep
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -56,9 +56,19 @@ def fmt_p(p):
 # %%
 rev = load("mart_delivery_reviews")
 rep = load("mart_delivery_repeat")
+def to_bool(s: pd.Series) -> pd.Series:
+    """Accept real booleans or 'true'/'false' text (CSV round trips); refuse anything else instead of guessing."""
+    if s.dtype == bool or str(s.dtype) == "boolean":
+        return s.astype(bool)
+    mapped = s.astype(str).str.strip().str.lower().map({"true": True, "false": False})
+    if mapped.isna().any():
+        raise ValueError(f"column {s.name!r} has values that are not true/false")
+    return mapped.astype(bool)
+
+
 for df, cols in ((rev, ["is_late", "is_low_review"]), (rep, ["is_late", "repeat_180d"])):
     for c in cols:
-        df[c] = df[c].astype(bool)
+        df[c] = to_bool(df[c])
 
 assert rep["customer_unique_id"].is_unique, "repeat table must have one row per person"
 assert rev["review_score"].between(1, 5).all(), "review scores must be 1-5"
@@ -124,14 +134,15 @@ print(f"Adjusted odds ratio for late delivery: {orr:.2f} (95% CI {olo:.2f}-{ohi:
 
 # Sensitivity: lateness clusters in a few bad months (e.g. Mar 2018), so also control for purchase month.
 m["purchase_month"] = pd.to_datetime(m.purchased_at).dt.strftime("%Y-%m")
-logit_m = smf.logit("y ~ late_i + log_value + C(state_grp) + C(purchase_month)", data=m).fit(disp=0)
+# BFGS, not Newton: one month has zero repeat events, which stops Newton's method from converging.
+logit_m = smf.logit("y ~ late_i + log_value + C(state_grp) + C(purchase_month)", data=m).fit(disp=0, method="bfgs", maxiter=2000)
+assert logit.mle_retvals["converged"] and logit_m.mle_retvals["converged"], "logistic regression did not converge"
 orr_m = float(np.exp(logit_m.params["late_i"])); mlo, mhi = np.exp(logit_m.conf_int().loc["late_i"])
 out["logit_adjusted_month"] = dict(odds_ratio_late=orr_m, ci_low=float(mlo), ci_high=float(mhi), p=float(logit_m.pvalues["late_i"]))
 print(f"Adjusted OR incl. purchase month: {orr_m:.2f} (95% CI {mlo:.2f}-{mhi:.2f}) | {fmt_p(logit_m.pvalues['late_i'])}")
 
 # Power: smallest repeat-rate gap this sample could detect (80% power, alpha 5%, two-sided).
 from statsmodels.stats.power import NormalIndPower
-from statsmodels.stats.proportion import proportion_effectsize
 p_base = t2["rate_a"]
 h = NormalIndPower().solve_power(effect_size=None, nobs1=len(lt), ratio=len(ot) / len(lt), alpha=ALPHA, power=0.8, alternative="two-sided")
 p_detect = float(np.sin((2 * np.arcsin(np.sqrt(p_base)) - h) / 2) ** 2)
@@ -205,6 +216,7 @@ Source: notebooks/04_delivery_impact.py. Do not edit by hand, re-run instead.
 - Minimum detectable repeat-rate gap (80% power): {(p_base - p_detect)*100:.2f} pp
 - Low-review share: late {t1['rate_a']:.1%} vs on-time {t1['rate_b']:.1%}, {fmt_p(t1['p'])}
 - Revenue at stake: R${est:,.0f} over {months:.1f} months (range R${low:,.0f} to R${high:,.0f}); all amounts in Brazilian reais.
+  {"Observational data: an association, not proven causation." if sig else "NOT SIGNIFICANT (the CI of the gap includes 0): illustration only, do NOT put this figure on the resume as a finding."}
 
 ## Draft resume bullet (check it against the numbers above before using)
 {line}

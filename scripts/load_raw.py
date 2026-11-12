@@ -60,7 +60,8 @@ def main() -> None:
         # dtype=str keeps the raw layer faithful (no silent type guessing);
         # utf-8-sig strips a byte-order mark if a header has one;
         # pandas handles the multi-line quoted text in the reviews file.
-        df = pd.read_csv(path, dtype=str, encoding="utf-8-sig")
+        # keep_default_na=False: text such as "NA" or "null" stays as text; only truly empty cells become NULL.
+        df = pd.read_csv(path, dtype=str, encoding="utf-8-sig", keep_default_na=False, na_values=[""])
         df.columns = [c.strip() for c in df.columns]
 
         job_config = bigquery.LoadJobConfig(
