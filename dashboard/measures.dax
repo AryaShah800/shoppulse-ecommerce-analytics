@@ -1,7 +1,7 @@
 // =====================================================================
 // ShopPulse - DAX measures (Power BI Desktop)
 // Tables to load (Get data -> Google BigQuery -> project -> dataset "shoppulse"):
-//   fct_orders, mart_funnel_monthly, mart_cohort_retention, mart_rfm
+//   fct_orders, mart_funnel_monthly, mart_cohort_retention, mart_rfm, mart_delivery_repeat
 // Create a Date table (Modeling -> New table):
 //   Dim Date = CALENDAR(DATE(2017,1,1), DATE(2018,8,31))
 // Relationship: Dim Date[Date]  1-to-many  fct_orders[purchase_date]  (see calculated column below)
@@ -101,11 +101,12 @@ AVERAGE ( mart_cohort_retention[retention_pct] ) / 100
 //   "Repeat Gap pp"        min 0   max 5    step 0.05  default = <gap from results/04_resume_numbers.md>
 //   "Avg Repeat Order R$"  min 50  max 400  step 5     default = <avg repeat order value from 04_summary.json>
 // Power BI then creates [Repeat Gap pp Value] and [Avg Repeat Order R$ Value] automatically.
+// Uses mart_delivery_repeat (one row per person: first valid order, delivered by 2018-03-04), so the count
+// matches the notebook exactly. Load this table too (it is not related to fct_orders; no relationship needed).
 Late First-time Customers =
 CALCULATE (
-    DISTINCTCOUNT ( fct_orders[customer_unique_id] ),
-    fct_orders[customer_order_seq] = 1,
-    fct_orders[is_late] = TRUE ()
+    COUNTROWS ( mart_delivery_repeat ),
+    mart_delivery_repeat[is_late] = TRUE ()
 )
 
 Revenue at Risk (R$) =

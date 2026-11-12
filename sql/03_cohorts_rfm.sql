@@ -91,6 +91,9 @@ cust AS (
   FROM valid_orders AS o
   GROUP BY o.customer_unique_id
 ),
+-- Tie-break note: NTILE splits ties by customer_unique_id (arbitrary but deterministic), so two customers with
+-- identical recency or spend can land in neighbouring quintiles. Segment sizes are reproducible but are partly a
+-- product of this tie-break, which matters most for recency (whole days) and for repeated spend values.
 scored AS (
   SELECT *,
     6 - NTILE(5) OVER (ORDER BY recency_days ASC, customer_unique_id)  AS r_score,   -- low recency_days = recent = 5

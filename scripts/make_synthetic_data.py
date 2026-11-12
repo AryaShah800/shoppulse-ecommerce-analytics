@@ -3,8 +3,9 @@ Refuses to write into results/ so fake numbers can never be mistaken for real on
 Usage: python scripts/make_synthetic_data.py /some/other/folder"""
 import sys, pathlib, numpy as np, pandas as pd
 out = pathlib.Path(sys.argv[1]).resolve()
-if out.name == "results" or "shoppulse/results" in str(out).replace("\\", "/"):
-    sys.exit("Refusing to write synthetic data into results/. Use a different folder.")
+results_dir = (pathlib.Path(__file__).resolve().parents[1] / "results").resolve()
+if out == results_dir or results_dir in out.parents:
+    sys.exit(f"Refusing to write synthetic data into {results_dir} (or any folder inside it). Use a different folder.")
 out.mkdir(parents=True, exist_ok=True)
 rng = np.random.default_rng(7)
 

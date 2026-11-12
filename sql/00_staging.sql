@@ -125,8 +125,15 @@ SELECT
   estimated_delivery_at,
   DATE_TRUNC(DATE(purchased_at), MONTH) AS purchase_month,
 
-  -- 1 = customer's first order, 2 = their second, ...  (by PERSON, not by customer_id)
-  ROW_NUMBER() OVER (PARTITION BY customer_unique_id ORDER BY purchased_at, order_id) AS customer_order_seq,
+  -- 1 = customer's first VALID order, 2 = their second, ...  (by PERSON, not by customer_id).
+  -- Valid = not canceled/unavailable and has a purchase time, the same rule as 03 and 04.
+  -- NULL for invalid orders, so a canceled first attempt does not make a later real purchase "order 2".
+  IF(order_status NOT IN ('canceled', 'unavailable') AND purchased_at IS NOT NULL,
+     ROW_NUMBER() OVER (
+       PARTITION BY customer_unique_id,
+                    (order_status NOT IN ('canceled', 'unavailable') AND purchased_at IS NOT NULL)
+       ORDER BY purchased_at, order_id),
+     NULL) AS customer_order_seq,
 
   n_items, item_value, freight_value, payment_value, review_score,
 
