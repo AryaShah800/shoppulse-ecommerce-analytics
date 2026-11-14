@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "note",
+  "position": {
+    "x": 25,
+    "y": 947,
+    "z": 0,
+    "width": 1380,
+    "height": 48,
+    "tabOrder": 972
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Customer identity uses customer_unique_id. R/M quintiles split ties deterministically by that id; frequency groups are 1, 2, 3+. Cohort retention is rounded to two percentage decimals in the SQL mart.",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#19324F"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

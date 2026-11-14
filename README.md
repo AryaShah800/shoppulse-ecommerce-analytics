@@ -5,8 +5,14 @@
 | | |
 |---|---|
 | Data | [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — ~100k orders, 2016–2018, 9 tables |
-| Stack | BigQuery (SQL), Python (Pandas, SciPy, statsmodels, Seaborn). A Power BI dashboard is specced in `dashboard/` but not built yet. |
+| Stack | BigQuery (SQL), Python (Pandas, SciPy, statsmodels, Seaborn). A four-page Power BI project is generated in `dashboard/`; Desktop refresh and export remain pending. |
 | Currency | All money is in Brazilian reais (R$), as in the source data |
+
+## Approach
+1. Load the nine Olist CSVs untouched into a BigQuery raw layer; type and clean them in staging views.
+2. Build one row per order (`fct_orders`) and check the data before using it (99,441 orders, no duplicate ids).
+3. Measure the fulfilment funnel, monthly cohort retention and RFM segments in SQL marts.
+4. Test late delivery against reviews and against 180-day repeat purchase (z-tests, logistic regression, power analysis), then write the memo.
 
 ## Key findings
 > Every number below is produced by the code in this repo (outputs in `results/`). Window: Jan 2017 to Aug 2018. The one-page recommendations memo is in `memo.md`.
@@ -16,6 +22,9 @@
 - **Late delivery vs reviews** (`04`): 62.40% of late orders got 1-2 stars vs 9.25% of on-time orders (p < 0.001; 95,560 orders).
 - **Late delivery vs repeat purchase** (`04`): repeat rate within 180 days of first delivery is 1.35% (late) vs 1.87% (on-time), gap 0.52 pp, 95% CI -0.01 to 0.91, p = 0.053 (52,310 people). **Borderline, not statistically significant at the 5% level.** Adjusted odds ratio 0.74 (95% CI 0.53 to 1.04); 0.78 (0.56 to 1.10, p = 0.156) when also controlling for purchase month. The repeat rate falls as lateness grows (1.52% for 1-3 days late, 1.22% for 8+), but the test could only detect gaps of about 0.68 pp or more.
 - **Revenue at stake** (`04`): R$1,658 over 13.8 months, range R$0 to R$2,919. Observational data and a non-significant gap, so this is an upper-end illustration, not a proven loss.
+
+## Dashboard
+A four-page native project, [`dashboard/ShopPulse.pbip`](dashboard/ShopPulse.pbip), and its semantic model are generated from real BigQuery exports and saved results. All 45 report JSON files pass Microsoft schemas; the data reconcile to the published counts. **Desktop rendering and export remain pending:** no ShopPulse `.pbix`, PDF or screenshots are claimed. See [`dashboard/BUILD_STATUS.md`](dashboard/BUILD_STATUS.md) for reproduction, snapshot/filter semantics and the exact remaining checks.
 
 ## Pipeline
 
@@ -51,7 +60,7 @@ data/raw/*.csv  ──load_raw.py──▶  olist_raw.*  (STRING, untouched)
    `results/mart_delivery_repeat.csv`, or set `GCP_PROJECT` and the notebook reads them from BigQuery.
 6. **Run the stats:** `python notebooks/04_delivery_impact.py`. It writes `results/04_resume_numbers.md`,
    `04_summary.json`, `04_dose_response.csv` and `04_delivery_impact.png`.
-7. **Dashboard (optional):** `dashboard/PAGES.md` and `dashboard/measures.dax` specify a 4-page Power BI report over the `mart_*` tables. The `.pbix` is not built yet.
+7. **Dashboard:** run `python scripts/export_dashboard_data.py --project YOUR_PROJECT --tables fct_orders`, then `python scripts/build_powerbi_project.py`. Open `dashboard/ShopPulse.pbip`, refresh and verify in Desktop before saving a PBIX or claiming the report is built. See `dashboard/BUILD_STATUS.md`.
 8. **Read the memo:** `memo.md` summarises the findings and recommendations.
 
 Testing the code without the data: `python scripts/make_synthetic_data.py <folder outside results/>` creates fake tables with the
@@ -72,7 +81,7 @@ shoppulse/
 ├── notebooks/04_delivery_impact.py   # z-tests, CI, robustness, dose-response, revenue sizing
 ├── scripts/make_synthetic_data.py    # fake data for testing the code only
 ├── results/             # exported query outputs (CSV) + generated numbers
-├── dashboard/           # measures.dax and PAGES.md (Power BI spec; .pbix not built)
+├── dashboard/           # generated PBIP/model + design reference; Desktop verification pending
 └── memo.md              # one-page recommendations memo
 ```
 

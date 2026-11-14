@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "inference",
+  "position": {
+    "x": 25,
+    "y": 430,
+    "z": 0,
+    "width": 1380,
+    "height": 80,
+    "tabOrder": 455
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Fixed repeat-purchase analysis: on-time 1.87% vs late 1.35%; on-time minus late = 0.52 pp; 95% CI -0.01 to 0.91 pp; p=0.053, NOT significant at 5%. One first delivered order per person, full 180-day follow-up measured after delivery. Observational, not causal.",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#19324F"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

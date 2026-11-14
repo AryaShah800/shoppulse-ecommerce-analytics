@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "scope",
+  "position": {
+    "x": 25,
+    "y": 947,
+    "z": 0,
+    "width": 1380,
+    "height": 48,
+    "tabOrder": 972
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Stage flags are cumulative. Durations use the saved BigQuery approximate median/p90 results for delivered orders; they are fixed global benchmarks. Purchase-to-approval hours are converted to days.",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#19324F"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

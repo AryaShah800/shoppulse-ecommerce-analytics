@@ -10,3 +10,7 @@ __pycache__/
 # Secrets
 .env
 *.json.key
+
+# Local Power BI source exports and Desktop caches
+dashboard/data/
+dashboard/**/.pbi/

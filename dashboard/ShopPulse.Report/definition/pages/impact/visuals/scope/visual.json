@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "scope",
+  "position": {
+    "x": 25,
+    "y": 910,
+    "z": 0,
+    "width": 1380,
+    "height": 80,
+    "tabOrder": 935
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Scenario only: causal assumption is unsupported. Defaults: 2,668 people x 0.516 pp x R$120.40 = R$1,658 (CI-derived range R$0-2,919). When a control is filtered, its highest selected value is used. This is not validated revenue loss. Scenario controls and fixed tests ignore descriptive slicers.",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#19324F"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "scope",
+  "position": {
+    "x": 25,
+    "y": 947,
+    "z": 0,
+    "width": 1380,
+    "height": 48,
+    "tabOrder": 972
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Window: purchases Jan 2017-Aug 2018. Revenue = delivered item prices, excluding freight. Late = delivery on a later calendar day than the estimate. Descriptive associations, not causal effects.",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#19324F"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
