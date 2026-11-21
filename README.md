@@ -2,6 +2,13 @@
 
 **Business question:** Do late deliveries cost Olist repeat customers, and how much revenue is at stake?
 
+## Interactive report (findings first)
+Open [`docs/index.html`](docs/index.html) (plotly.js from a pinned CDN; `--offline` builds a self-contained copy; no Power BI, no account). Once GitHub Pages serves `/docs` from this branch or main it is a public link. Rebuild offline from `results/` with `python scripts/build_report.py --png`.
+
+![ShopPulse report: key findings and charts](docs/img/report-full.png)
+
+Dependency note: the BigQuery sandbox tables behind this analysis expire around 2027-01-11. The report and every number in it come from the committed `results/` files, so nothing breaks when they expire.
+
 | | |
 |---|---|
 | Data | [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — ~100k orders, 2016–2018, 9 tables |
