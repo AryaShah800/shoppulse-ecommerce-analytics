@@ -3,7 +3,7 @@
 **Business question:** Do late deliveries cost Olist repeat customers, and how much revenue is at stake?
 
 ## Interactive report (findings first)
-Open [`docs/index.html`](docs/index.html) (self-contained, no Power BI, no account). Once GitHub Pages serves `/docs` from this branch or main it is a public link. Rebuild offline from `results/` with `python scripts/build_report.py --png`.
+Open [`docs/index.html`](docs/index.html) (plotly.js from a pinned CDN; `--offline` builds a self-contained copy; no Power BI, no account). Once GitHub Pages serves `/docs` from this branch or main it is a public link. Rebuild offline from `results/` with `python scripts/build_report.py --png`.
 
 ![ShopPulse report: key findings and charts](docs/img/report-full.png)
 

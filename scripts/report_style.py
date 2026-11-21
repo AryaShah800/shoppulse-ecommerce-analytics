@@ -1,10 +1,11 @@
 """Shared report style: dataviz-skill categorical palette, insight-first HTML page.
 
 Copied verbatim into each repo (scripts/report_style.py). Findings lead the page; charts follow.
-plotly.min.js is inlined when the page stays under 5 MB, otherwise a pinned CDN version is used.
+plotly.js comes from a pinned CDN URL by default; offline=True inlines it (about 5 MB).
 """
 from __future__ import annotations
 import html
+import re
 from pathlib import Path
 import plotly
 import plotly.graph_objects as go
@@ -41,7 +42,8 @@ CSS = f"""
 main{{max-width:1040px;margin:0 auto;padding:32px 16px 64px}}
 h1{{font-size:1.7rem;line-height:1.2;margin:0 0 6px}} .sub{{color:var(--ink2);margin:0 0 24px}}
 h2{{font-size:1.15rem;margin:36px 0 4px}} .note{{color:var(--muted);font-size:.9rem;margin:0 0 8px}}
-.insights{{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}}
+.insights{{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}} .card{{grid-column:span 2}} .card.wide{{grid-column:span 3}}
+@media (max-width:760px){{.insights{{grid-template-columns:1fr}} .card,.card.wide{{grid-column:auto}}}}
 .card{{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}}
 .card .num{{font-size:1.9rem;font-weight:700;color:var(--accent);line-height:1.1}}
 .card .what{{font-weight:600;margin:4px 0 8px}} .card p{{margin:4px 0;font-size:.92rem;color:var(--ink2)}}
@@ -56,12 +58,14 @@ def _esc(s: str) -> str:
     return html.escape(s, quote=False)
 
 
-def build_page(title, subtitle, insights, sections, caveat="", footer="", out="docs/index.html"):
+def build_page(title, subtitle, insights, sections, caveat="", footer="", out="docs/index.html", offline=False):
     """insights: list of dict(num, what, action, impact). sections: list of (heading, note, fig)."""
+    n_i = len(insights)
+    wide = lambda k: " wide" if n_i % 3 == 2 and k >= n_i - 2 else ""  # last row of 2 -> two wide cards
     cards = "".join(
-        f'<div class="card"><div class="num">{_esc(i["num"])}</div><div class="what">{_esc(i["what"])}</div>'
+        f'<div class="card{wide(k)}"><div class="num">{_esc(i["num"])}</div><div class="what">{_esc(i["what"])}</div>'
         f'<p><b>Action:</b> {_esc(i["action"])}</p><p><b>Impact:</b> {_esc(i["impact"])}</p></div>'
-        for i in insights)
+        for k, i in enumerate(insights))
     body = []
     for n, (h, note, fig) in enumerate(sections):
         div = pio.to_html(fig, include_plotlyjs=False, full_html=False, config={"displaylogo": False, "responsive": True}, div_id=f"c{n}")
@@ -75,10 +79,10 @@ def build_page(title, subtitle, insights, sections, caveat="", footer="", out="d
                 f'{"".join(body)}<footer>{footer}</footer></main></body></html>')
 
     js = (Path(plotly.__file__).parent / "package_data" / "plotly.min.js").read_text(encoding="utf-8")
-    import re
-    ver = re.search(r"plotly\.js v([\d.]+)", js[:200]).group(1)  # pinned to the bundled version
-    doc = page(f"<script>{js}</script>")
-    if len(doc.encode("utf-8")) > SIZE_LIMIT:
+    ver = re.search(r"plotly\.js v([\d.]+)", js[:200]).group(1)  # CDN pinned to the bundled version
+    if offline:  # self-contained file (about 5 MB)
+        doc = page(f"<script>{js}</script>")
+    else:
         doc = page(f'<script src="https://cdn.plot.ly/plotly-{ver}.min.js" charset="utf-8"></script>')
     p = Path(out); p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(doc, encoding="utf-8")

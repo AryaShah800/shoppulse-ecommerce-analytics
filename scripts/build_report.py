@@ -1,5 +1,6 @@
 """Build docs/index.html (static, offline) from results/*.csv and results/04_summary.json.
-Usage: python scripts/build_report.py [--png]   (--png also writes docs/img/*.png via Playwright)
+Usage: python scripts/build_report.py [--png] [--offline] [--out DIR]   (--offline inlines plotly.js, about 5 MB; default uses a pinned CDN)
+#   (--png also writes docs/img/*.png via Playwright)
 Needs: pip install plotly pandas (+ playwright for --png). No BigQuery access required."""
 import json
 import sys
@@ -10,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from report_style import BLUE, ORANGE, MUTED, SEQ, style, build_page, screenshot  # noqa: E402
 
 R = Path(__file__).resolve().parents[1]
+OUT = Path(sys.argv[sys.argv.index("--out") + 1]) if "--out" in sys.argv else R / "docs"
 res = R / "results"
 s = json.load(open(res / "04_summary.json"))
 funnel = pd.read_csv(res / "02a_funnel_overall.csv")
@@ -104,9 +106,9 @@ out, size = build_page(
     insights, sections,
     caveat="Observational data. Late delivery is strongly linked to bad reviews, but its link to repeat purchase is borderline (p = 0.053) and the test could only detect gaps of about 0.68 pp or more. Every number comes from this repo's code (results/).",
     footer='Source: <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce">Olist dataset</a> (CC BY-NC-SA 4.0). Method: README and memo.md in the repo.',
-    out=str(R / "docs" / "index.html"))
+    out=str(OUT / "index.html"), offline="--offline" in sys.argv)
 print("wrote", out, f"{size/1e6:.2f} MB")
 if "--png" in sys.argv:
-    (R / "docs" / "img").mkdir(exist_ok=True)
-    screenshot(out, R / "docs" / "img" / "report-top.png", height=1100)
-    screenshot(out, R / "docs" / "img" / "report-full.png", full=True)
+    (OUT / "img").mkdir(exist_ok=True)
+    screenshot(out, OUT / "img" / "report-top.png", height=1100)
+    screenshot(out, OUT / "img" / "report-full.png", full=True)
