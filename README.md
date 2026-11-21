@@ -33,6 +33,13 @@ Dependency note: the BigQuery sandbox tables behind this analysis expire around 
 ## Dashboard
 A four-page native project, [`dashboard/ShopPulse.pbip`](dashboard/ShopPulse.pbip), and its semantic model are generated from real BigQuery exports and saved results. All 45 report JSON files pass Microsoft schemas; the data reconcile to the published counts. **Desktop rendering and export remain pending:** no ShopPulse `.pbix`, PDF or screenshots are claimed. See [`dashboard/BUILD_STATUS.md`](dashboard/BUILD_STATUS.md) for reproduction, snapshot/filter semantics and the exact remaining checks.
 
+## dbt models and tests
+`dbt/` ports the staging and `fct_orders` logic to dbt on DuckDB (no cloud account) and tests it: unique/not-null/accepted-values/relationship tests plus singular tests (cumulative funnel, one row per order, late only for delivered orders). It runs on a deterministic 5,000-order sample committed as seeds (`scripts/sample_olist_seed.py`, CC BY-NC-SA 4.0 attribution in `dbt/seeds/README.md`). The sample is for testing the pipeline, not for findings.
+```bash
+pip install dbt-duckdb
+cd dbt && DBT_PROFILES_DIR=. dbt build     # 7 seeds, 5 views, 3 tables, 20 tests: PASS=35
+```
+
 ## Pipeline
 
 ```
