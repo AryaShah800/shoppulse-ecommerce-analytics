@@ -1,0 +1,28 @@
+name: shoppulse
+version: "1.0.0"
+config-version: 2
+profile: shoppulse
+model-paths: [models]
+seed-paths: [seeds]
+test-paths: [tests]
+target-path: target
+clean-targets: [target, dbt_packages]
+
+# Seeds are a deterministic 5,000-order sample (see ../scripts/sample_olist_seed.py and seeds/README.md).
+# Every raw column stays text, like the BigQuery raw layer; typing happens in staging.
+seeds:
+  shoppulse:
+    +quote_columns: false
+    +column_types:
+      review_score: varchar
+      payment_value: varchar
+      price: varchar
+      freight_value: varchar
+      order_item_id: varchar
+      payment_sequential: varchar
+      product_weight_g: varchar
+
+models:
+  shoppulse:
+    staging: {+materialized: view}
+    marts: {+materialized: table}

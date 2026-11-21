@@ -1,0 +1,7 @@
+shoppulse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: target/shoppulse.duckdb
+      threads: 1
